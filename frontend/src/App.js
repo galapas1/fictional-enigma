@@ -41,21 +41,12 @@ function App() {
     xhr.open('GET', href);
 
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Access-Control-Allow-Origin","*");
-    xhr.setRequestHeader("Access-Control-Allow-Headers","*");
-    xhr.setRequestHeader("Access-Control-Allow-Credentials","true");
     xhr.setRequestHeader("x-api-key", apiKey);
 
     xhr.onload = function() {
       if (xhr.status === 200) {
-          console.log('Success');
-          console.log(xhr.data);
-          console.log(xhr.response);
         setData(xhr.response);
       } else {
-          console.log('Not success');
-          console.log(xhr.data);
-          console.log(xhr.response);
         setData(xhr.response);
       }
     };
