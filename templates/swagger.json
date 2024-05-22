@@ -1,0 +1,344 @@
+{
+  "openapi": "3.0.1",
+  "x-original-swagger-version": "2.0",
+  "info": {
+    "title": "eCFR API v1",
+    "description": "eCFR API Gateway v1.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "${server_url}"
+    }
+  ],
+  "paths": {
+    "/v1/ecfr/{pubDate}/{title}": {
+      "get": {
+        "summary": "eCFR for .gov",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/authorization"
+          },
+          {
+            "name": "pubDate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-03-01"
+          },
+          {
+            "name": "title",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "title-2"
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "httpMethod": "POST",
+          "uri": "${endpoint_api_lambda}",
+          "credentials": "${endpoint_api_role}",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestParameters": {
+            "integration.request.path.pubDate": "method.request.path.pubDate",
+            "integration.request.path.title": "method.request.path.title"
+          },
+          "requestTemplates": {
+            "application/json": "{ \"pubDate\": \"$util.urlDecode($input.params('pubDate'))\", \"title\": \"$util.urlDecode($input.params('title'))\" }"
+          },
+          "passthroughBehavior": "when_no_match"
+        },
+        "security": [
+          {
+            "authorizerHandler": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Empty"
+          },
+          "400": {
+            "$ref": "#/components/responses/400InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          }
+        }
+      },
+      "options": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {
+              "Access-Control-Allow-Credentials": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "OPTIONS",
+          "requestTemplates": {
+            "application/json": "{\n  \"statusCode\" : 200\n}\n"
+          },
+          "responses": {
+            "default": {
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "responseTemplates": {
+                "application/json": "{}\n"
+              },
+              "statusCode": "200"
+            }
+          },
+          "type": "mock"
+        }
+      }
+    },
+    "/v1/ecfr-s3/{pubDate}/{title}": {
+      "get": {
+        "summary": "eCFR from S3",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/authorization"
+          },
+          {
+            "name": "pubDate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2024-03-01"
+          },
+          {
+            "name": "title",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "title-2"
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "credentials": "${endpoint_api_role}",
+          "responses": {
+            "4\\d{2}": {
+              "statusCode": "400"
+            },
+            "5\\d{2}": {
+              "statusCode": "500"
+            },
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "requestParameters": {
+            "integration.request.path.pubDate": "method.request.path.pubDate",
+            "integration.request.path.title": "method.request.path.title"
+          },
+          "uri": "arn:aws:apigateway:${region}:s3:path/${bucket}/{pubDate}__{title}",
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "GET",
+          "type": "aws"
+        },
+        "security": [
+          {
+            "authorizerHandler": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Empty"
+          },
+          "400": {
+            "$ref": "#/components/responses/400InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          }
+        }
+      },
+      "options": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {
+              "Access-Control-Allow-Credentials": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "httpMethod": "OPTIONS",
+          "requestTemplates": {
+            "application/json": "{\n  \"statusCode\" : 200\n}\n"
+          },
+          "responses": {
+            "default": {
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'*'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "responseTemplates": {
+                "application/json": "{}\n"
+              },
+              "statusCode": "200"
+            }
+          },
+          "type": "mock"
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "authorization": {
+        "in": "header",
+        "name": "x-api-key",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    },
+    "responses": {
+      "Empty": {
+        "description": "Empty"
+      },
+      "400InvalidRequest": {
+        "description": "InvalidRequest",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "number"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "isBase64Encoded": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Error type",
+                  "enum": [
+                    "Unauthorized"
+                  ],
+                  "example": "Unauthorized"
+                }
+              },
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          }
+        }
+      },
+      "403Forbidden": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "Error type",
+                  "enum": [
+                    "Forbidden"
+                  ]
+                }
+              },
+              "example": {
+                "message": "Forbidden"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "authorizerHandler": {
+        "name": "authorizerHandler",
+        "type": "apiKey",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "Custom scheme with corporate claims",
+        "x-amazon-apigateway-authorizer": {
+          "type": "request",
+          "authorizerUri": "${authorizer_lambda}",
+          "authorizerCredentials": "${authorizer_credentials}",
+          "authorizerResultTtlInSeconds": 0,
+          "authorizerPayloadFormatVersion": "1.0",
+          "identitySource": "method.request.header.x-api-key"
+        }
+      }
+    }
+  }
+}
