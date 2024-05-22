@@ -1,4 +1,4 @@
-![Alt text](relative%20imgs/eCFRProjectArchitecture.png?raw=true "eCFR Project Architecture")
+![Alt text](./imgs/eCFRProjectArchitecture.png?raw=true "eCFR Project Architecture")
 
 # fictional-enigma
 eCFR Project
