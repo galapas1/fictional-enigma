@@ -7,4 +7,4 @@ The solution is developed entirely in Terraform, employing a Swagger OpenApi spe
 
 See the docs/ for more information.
 
-Portal URL: https://d1pmcp3ouh6wcg.cloudfront.net/
+Portal URL: https://ecfr.galapas.net
