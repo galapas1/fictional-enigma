@@ -48,4 +48,9 @@ input {
   margin-top: 20px;
   color: grey;
   overflow-y: auto;
+  width: 70%;
+  height: 200px;
+}
+
+.textarea {
 }

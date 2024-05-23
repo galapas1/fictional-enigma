@@ -44,8 +44,14 @@ function App() {
     xhr.setRequestHeader("x-api-key", apiKey);
 
     xhr.onload = function() {
-      if (xhr.status === 200) {
-        setData(xhr.response);
+      if (useS3) {
+          setData(xhr.response);
+          return;
+      }
+      if(xhr.response.includes('html')) {
+          setData(JSON.parse(JSON.parse(xhr.response)['body']));
+      } else if (xhr.response.includes('message')) {
+          setData(JSON.parse(JSON.parse(xhr.response)['body'])['message']);
       } else {
         setData(xhr.response);
       }
@@ -54,7 +60,7 @@ function App() {
     try {
       xhr.send();
     } catch (e) {
-      setData("Whoops... something went wrong. Please try again");
+      setData('Whoops... something went wrong. Please try again');
     }
   };
 
@@ -85,7 +91,7 @@ function App() {
         < br />
         <button onClick={handleSubmit}>Submit</button>
 
-        {data ? <div className="data">{JSON.stringify(data)}</div> :
+        {data ? <textarea className="data" value={JSON.stringify(data)} /> :
           <div className="data">
             Waiting...
           </div>
