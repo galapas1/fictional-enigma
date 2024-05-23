@@ -1,9 +1,13 @@
 import logo from './public/mancomm_logo.webp';
 import './App.css';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    document.title = 'eCFR Proj';
+  }, []);
+
   const [apiKey,  setApiKey ] = useState('');
   const [pubDate, setPubDate] = useState('');
   const [title,   setTitle  ] = useState('');
@@ -29,13 +33,18 @@ function App() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    if(!(pubDate && title)) {
+        setData("'Publication Date' and 'Title' are required");
+        return;
+    }
+
     var href = 'https://xeplvzxf0e.execute-api.us-east-1.amazonaws.com/dev/v1/ecfr';
     if (useS3) {
         href += '-s3';
     }
     href += '/' + pubDate + '/' + title;
 
-    setData('Loading ...');
+    setData('...loading ...');
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', href);
@@ -84,16 +93,18 @@ function App() {
          <input type="text" maxLength="10" size="40" value={title} onChange={handleTitleChange} />
         </div>
  
+        < br />
         <div className="block">
          <span>Use S3 (checked) or .gov (unchecked)&nbsp;&nbsp;</span>
          <input type="checkbox" value={useS3} onChange={handleUseS3Change} />
         </div>
+
         < br />
         <button onClick={handleSubmit}>Submit</button>
 
         {data ? <textarea className="data" value={JSON.stringify(data)} /> :
           <div className="data">
-            Waiting...
+            ...waiting...
           </div>
         }
 
