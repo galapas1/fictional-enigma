@@ -60,7 +60,11 @@ function App() {
       if(xhr.response.includes('html')) {
           setData(JSON.parse(JSON.parse(xhr.response)['body']));
       } else if (xhr.response.includes('message')) {
+        if (xhr.response.includes('body')) {
           setData(JSON.parse(JSON.parse(xhr.response)['body'])['message']);
+        } else {
+          setData(JSON.parse(xhr.response)['message']);
+        }
       } else {
         setData(xhr.response);
       }
@@ -102,7 +106,7 @@ function App() {
         < br />
         <button onClick={handleSubmit}>Submit</button>
 
-        {data ? <textarea className="data" value={JSON.stringify(data)} /> :
+        {data ? <textarea className="data" readOnly={true} value={JSON.stringify(data)} /> :
           <div className="data">
             ...waiting...
           </div>
